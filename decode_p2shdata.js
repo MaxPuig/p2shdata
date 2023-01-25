@@ -9,8 +9,6 @@ const txid = '1aee8058f206821dbaefd2ddec9dcbb5b71655c6627eaec33b5805fa61ed496a';
 // const txid = '1cd21c912628bcfc9c7f95389b4eb0f8b4a452b4c3803376932f0a2e270c3818'; // ASCII Loewenbraeu.txt
 // const txid = '3db2de399ddf2f97f82848b5df68d11486e497134b04d4f88344dfd117c6cb58'; // ASCII  elements.txt
 // const txid = '4abfe3c11b1a0eef9c4df61363ebebff14e581a1bc30e47543a0ae30a66e5d3f'; // base64  opreturn_logo.png
-// const txid = '92f914660097403ec1cb047ecc1e2582671f6e6f9d116940d594df9d5b33705d'; // base64  opreturn_logo.png
-// const txid = 'fe20230b045f320e1fdfa1bb94feb0494770dabd303d646662e845c531eddcc2'; // base64  opreturn_logo.png
 
 main();
 
