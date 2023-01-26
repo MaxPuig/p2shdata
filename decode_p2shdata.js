@@ -20,14 +20,14 @@ async function main() {
     let data_array = tx.inputs.map((vin) => { return vin.script });
     let data = '';
     for (let chunk of data_array) {
-        if (chunk.length < 152) { // deletes the first 2 and the last 11 bytes (OP_CODES)
-            chunk = chunk.slice(4);
+        if (chunk.startsWith('4d')) { // deletes the first 6 and the last 11 bytes (OP_CODES)
+            chunk = chunk.slice(12);
             data += chunk.slice(0, -22);
-        } else if (chunk.length >= 152 && chunk.length <= 255) { // deletes the first 4 and the last 11 bytes (OP_CODES)
+        } else if (chunk.startsWith('4c')) { // deletes the first 4 and the last 11 bytes (OP_CODES)
             chunk = chunk.slice(8);
             data += chunk.slice(0, -22);
-        } else { // deletes the first 6 and the last 11 bytes (OP_CODES)
-            chunk = chunk.slice(12);
+        } else { // deletes the first 2 and the last 11 bytes (OP_CODES)
+            chunk = chunk.slice(4);
             data += chunk.slice(0, -22);
         }
     }
