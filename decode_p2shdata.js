@@ -1,6 +1,5 @@
 import { ElectrumClient } from '@samouraiwallet/electrum-client';
 import garlicore from 'bitcore-lib-grlc';
-import CryptoJS from 'crypto-js';
 import fs from 'fs';
 const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
 
@@ -34,8 +33,7 @@ async function main() {
     let decodedTitle = decodeTitle(title);
     console.log(decodedTitle);
     // ripemd160(sha256) hash of the data
-    let hash256 = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(data)).toString();
-    let hash160 = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(hash256)).toString();
+    let hash160 = garlicore.crypto.Hash.sha256ripemd160(Buffer.from(data, 'hex')).toString('hex');
     console.log('hash160 match:', hash160 == decodedTitle.datahash160);
     fs.mkdir('./data/', { recursive: true }, function (err) { // create data folder and save file
         if (err) return cb(err);
