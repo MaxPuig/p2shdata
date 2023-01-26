@@ -23,16 +23,13 @@ function createOpReturn(site, protocol, version, filename, filetype, data, assem
     if (filesize.length > 4 * 2) throw new Error('Filesize is too long. Max 4 bytes.');
     let final_assembly_script = assembly_script.encoding ? '05' : '03'; // length of assembly script
     final_assembly_script += 'dc' + assembly_script.vin_start.toString(16).padStart(2, '0') + assembly_script.vin_end.toString(16).padStart(2, '0'); // data location
-    assembly_script.vin_start = parseInt(assembly_script.vin_start, 16);
-    assembly_script.vin_end = parseInt(assembly_script.vin_end);
     if (assembly_script.vin_start > assembly_script.vin_end) throw new Error('Vin start must be less than vin end.');
     if (assembly_script.vin_start < 0 || assembly_script.vin_start > 255) throw new Error('Vin start must be between 0 and 255.');
     if (assembly_script.vin_end < 0 || assembly_script.vin_end > 255) throw new Error('Vin end must be between 0 and 255.');
     if (assembly_script.encoding)
         final_assembly_script += assembly_script.encoding ? 'ec' + assembly_script.encoding : ''; // encoding type
-    if (!['64', '16', '10', 'f8', undefined].includes(assembly_script.encoding)) {
+    if (!['64', '16', '10', 'f8', undefined].includes(assembly_script.encoding))
         throw new Error('Encoding must be type string -> "16": hex, "10": decimal, "64": base64, "f8": UTF-8 or undefined for ASCII.');
-    }
     final_assembly_script = final_assembly_script.padEnd(24, '0');
     let datahash160 = garlicore.crypto.Hash.sha256ripemd160(Buffer.from(data, 'hex')).toString('hex');
     let op_codes = '6a4c50'; // OP_RETURN + OP_PUSHDATA1 + 80
