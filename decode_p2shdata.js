@@ -3,9 +3,9 @@ import garlicore from 'bitcore-lib-grlc';
 import fs from 'fs';
 const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
 
-const txid = '12c848c6604983a94757c43b13d85f0ae53510423bad47ccf6f19698f496da0f'; // base64 grlc.png
+const txid = 'd810cc3ec4067244f6a3a6a08e77913e230f7c20776c8ec0f0de88100756d5d1'; // base64 grlc.png
 // const txid = '7aba46568d3b8170024826409c1c468af968d5cf8b96f5021dad372d16886f24'; // base64 9+10.mp3
-// const txid = 'a460073d1d1f015e0fbe1ccc92eb0e0a56f9261c12c92541280e485c39138039'; // base64 MP..png
+// const txid = 'a460073d1d1f015e0fbe1ccc92eb0e0a56f9261c12c92541280e485c39138039'; // hex MP..png
 // const txid = 'b68d1ac47243cf50b2d578efb225e83e616fa6c9d1d93cc89338b2cee935797c'; // ASCII first_test.txt
 // const txid = 'd311952fd3ade19017220e2329e06d2d4db805a61260c49499ca6fa100bd2131'; // base64 0pad_protocol.jpg
 // const txid = '1aee8058f206821dbaefd2ddec9dcbb5b71655c6627eaec33b5805fa61ed496a'; // base64 garlicoin.png
