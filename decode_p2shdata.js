@@ -3,7 +3,12 @@ import garlicore from 'bitcore-lib-grlc';
 import fs from 'fs';
 const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
 
-const txid = '1aee8058f206821dbaefd2ddec9dcbb5b71655c6627eaec33b5805fa61ed496a'; // base64 garlicoin.png
+const txid = '12c848c6604983a94757c43b13d85f0ae53510423bad47ccf6f19698f496da0f'; // base64 grlc.png
+// const txid = '7aba46568d3b8170024826409c1c468af968d5cf8b96f5021dad372d16886f24'; // base64 9+10.mp3
+// const txid = 'a460073d1d1f015e0fbe1ccc92eb0e0a56f9261c12c92541280e485c39138039'; // base64 MP..png
+// const txid = 'b68d1ac47243cf50b2d578efb225e83e616fa6c9d1d93cc89338b2cee935797c'; // ASCII first_test.txt
+// const txid = 'd311952fd3ade19017220e2329e06d2d4db805a61260c49499ca6fa100bd2131'; // base64 0pad_protocol.jpg
+// const txid = '1aee8058f206821dbaefd2ddec9dcbb5b71655c6627eaec33b5805fa61ed496a'; // base64 garlicoin.png
 // const txid = '1e882dbb3206cbc3d2699a2e01fedb9204797f43efacd8453dcaeb318f772223'; // base64 garlic5.jpg
 // const txid = '1cd21c912628bcfc9c7f95389b4eb0f8b4a452b4c3803376932f0a2e270c3818'; // ASCII Loewenbraeu.txt
 // const txid = '3db2de399ddf2f97f82848b5df68d11486e497134b04d4f88344dfd117c6cb58'; // ASCII  elements.txt
@@ -71,8 +76,11 @@ function decodeAssemblyScript(entire_assembly_script) {
     if (script.includes('ec')) {
         encoding = script.slice(6, 10);
         encoding_type = encoding.slice(2, 4);
+        console.log(encoding_type);
         if (encoding_type == '64') {
             encoding_type = 'base64';
+        } else if (encoding_type == '16') {
+            encoding_type = 'hex';
         } else if (encoding_type == '10') {
             encoding_type = 'base10';
         } else if (encoding_type == 'f8') {
