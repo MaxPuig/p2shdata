@@ -7,6 +7,7 @@ import fs from 'fs';
 const password = 'password'; // This password will be the PrivateKey for the origin address. You'll have to fund it
 const origin_address_funded = false; // Is the above address funded? (Run once with false, to get the address, then fund it and run again with true)
 const multiple_addresses_funded = false; // This should only be true if all the addresses are funded. (Usually false unless an error happens)
+let multiple_addresses_funded_txid = ''; // This should be blank. If the above is true, place in the transaction ID of the transaction that funded all the addresses.
 const destination_address = 'GNT5zFdyyXRrW8QQLHsAF4F5PZ3E397zg1'; // Where all the grlc from address(password) will be sent.
 const origin_address_fee = 100_000; // 0.001 GRLC
 const destination_address_fee = 1_000_000; // 0.01 GRLC
@@ -14,7 +15,7 @@ const destination_address_fee = 1_000_000; // 0.01 GRLC
 const file = fs.readFileSync('./upload/grlc.png', 'hex'); // location of the file to upload
 const filename = 'grlc';
 const filetype = 'png';
-const encoding = '64'; // "16": hex, "10": decimal, "64": base64, "f8": UTF-8 or undefined for ASCII.
+const encoding = '64'; // hex: "16", decimal: "10", base64: "64", UTF-8: "f8" or ASCII: undefined.
 const salt = 69;
 const site = 'maxpuig.com'; // opreturn.net
 const protocol = '/p2shdata';
@@ -57,6 +58,7 @@ async function main() {
                     "satoshis": utxo.value,
                 })
             });
+            if(total_amount_temp < origin_address_fee) throw new Error('Insufficient funds in origin address');
             total_amount_temp -= origin_address_fee; // fee
             let tx_temp = new garlicore.Transaction();
             tx_temp.from(utxos_temp);
@@ -66,32 +68,27 @@ async function main() {
             tx_temp.change(destination_address);
             tx_temp.sign(privateKey);
             let serialized_tx_temp = tx_temp.toString();
-
             console.log('Broadcasting transaction...');
-            let txid_temp = await client.blockchainTransaction_broadcast(serialized_tx_temp);
-            console.log('Transaction ID funding all the addresses:', txid_temp);
+            multiple_addresses_funded_txid = await client.blockchainTransaction_broadcast(serialized_tx_temp);
+            console.log('Transaction ID funding all the addresses:', multiple_addresses_funded_txid);
             client.close();
-            console.log('Waiting 15 seconds for the transaction to be confirmed...');
-            await sleep(15000);
+            console.log('Waiting 10 seconds for the transaction to be confirmed...');
+            await sleep(10000);
         }
+        connectToElectrum();
+        let utxos_addresses = await client.blockchainTransaction_get(multiple_addresses_funded_txid);
+        utxos_addresses = garlicore.Transaction(utxos_addresses).toObject().outputs;
         let tx = new garlicore.Transaction();
         let total_amount = 0;
-        let addresses_utxos = { 'address': 'times_used' }
-        for (let pair of address_and_redeemscript) addresses_utxos[pair.address] = 0;
-        for (let pair of address_and_redeemscript) {
-            console.log('Getting UTXOs for', pair.address);
-            connectToElectrum();
-            let utxos = await client.blockchainAddress_listunspent(pair.address);
-            client.close();
-            total_amount += utxos[addresses_utxos[pair.address]].value;
+        for (let i = 0; i < utxos_addresses.length; i++) {
+            total_amount += utxos_addresses[i].satoshis;
             let utxo = new garlicore.Transaction.UnspentOutput({
-                "txId": utxos[addresses_utxos[pair.address]].tx_hash,
-                "outputIndex": utxos[addresses_utxos[pair.address]].tx_pos,
-                "address": pair.address,
-                "script": pair.redeemscript,
-                "satoshis": utxos[addresses_utxos[pair.address]].value,
-            })
-            addresses_utxos[pair.address]++;
+                "txId": multiple_addresses_funded_txid,
+                "outputIndex": i,
+                "address": address_and_redeemscript[i].address,
+                "script": utxos_addresses[i].script,
+                "satoshis": utxos_addresses[i].satoshis,
+            });
             tx.from(utxo);
         }
         tx.to(destination_address, total_amount - destination_address_fee);
@@ -102,7 +99,6 @@ async function main() {
         }
         let serialized_tx = tx.toString();
         console.log('Broadcasting transaction...');
-        connectToElectrum();
         let txid = await client.blockchainTransaction_broadcast(serialized_tx);
         console.log('Transaction ID:', txid);
         client.close();
@@ -126,6 +122,7 @@ function getAddressesAndRedeemScripts(chunks, salt) {
             op_codes_start = '4d' + decimalToHexLittleEndian(chunk.length / 2); // OP_PUSHDATA2 + (256-500) (little endian)
         }
         const saltHex = salt.toString(16).padStart(16, '0'); // convert salt to hex and pad it to 8 bytes
+        if (saltHex.length > 16) throw new Error('Salt must be maximum of 8 bytes hex.');
         const op_codes_end = '08' + saltHex + '6d51'; // OP_PUSH8 + salt + OP_2DROP OP_1
         const redeemscript = Buffer.from(op_codes_start + chunk + op_codes_end, 'hex');
         const hash160 = garlicore.crypto.Hash.sha256ripemd160(redeemscript);
