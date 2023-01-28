@@ -76,7 +76,6 @@ function decodeAssemblyScript(entire_assembly_script) {
     if (script.includes('ec')) {
         encoding = script.slice(6, 10);
         encoding_type = encoding.slice(2, 4);
-        console.log(encoding_type);
         if (encoding_type == '64') {
             encoding_type = 'base64';
         } else if (encoding_type == '16') {
