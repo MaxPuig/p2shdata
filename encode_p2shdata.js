@@ -32,6 +32,7 @@ if (!origin_address_funded) {
 }
 
 const chunks = file.match(/.{1,1000}/g); // 500 byte chunks
+if(chunks.length > 255) throw new Error('File is too large.');
 const assembly_script = {
     vin_start: 0,
     vin_end: chunks.length - 1,
