@@ -8,7 +8,7 @@ const password = 'password'; // This password will be the PrivateKey for the ori
 const origin_address_funded = false; // Is the above address funded? (Run once with false, to get the address, then fund it and run again with true)
 const multiple_addresses_funded = false; // This should only be true if all the addresses are funded. (Usually false unless an error happens)
 let multiple_addresses_funded_txid = ''; // This should be blank. If the above is true, place in the transaction ID of the transaction that funded all the addresses.
-const destination_address = 'GNT5zFdyyXRrW8QQLHsAF4F5PZ3E397zg1'; // Where all the grlc from address(password) will be sent.
+const destination_address = 'GNT5zFdyyXRrW8QQLHsAF4F5PZ3E397zg1'; // Where all the grlc will be sent.
 const origin_address_fee = 100_000; // 0.001 GRLC
 const destination_address_fee = 1_000_000; // 0.01 GRLC
 
@@ -117,7 +117,7 @@ function getAddressesAndRedeemScripts(chunks, salt) {
         let unlockingScript;
         if (chunk.length < 76 * 2) {
             op_codes_start = (chunk.length / 2).toString(16).padStart(2, '0'); // OP_PUSH(1-75)
-        } else if (chunk.length < 255 * 2) {
+        } else if (chunk.length < 256 * 2) {
             op_codes_start = '4c' + (chunk.length / 2).toString(16).padStart(2, '0'); // OP_PUSHDATA1 + (75-255)
         } else {
             op_codes_start = '4d' + decimalToHexLittleEndian(chunk.length / 2); // OP_PUSHDATA2 + (256-500) (little endian)
