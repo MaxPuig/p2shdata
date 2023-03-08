@@ -1,6 +1,6 @@
 import garlicore from 'bitcore-lib-grlc';
 import { ElectrumClient } from '@samouraiwallet/electrum-client';
-const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
+const client = new ElectrumClient(50002, 'electrum.maxpuig.com', 'ssl');
 import fs from 'fs';
 
 //////////////////////////////// EDIT ////////////////////////////////
@@ -32,12 +32,12 @@ if (!origin_address_funded) {
 }
 
 const chunks = file.match(/.{1,1000}/g); // 500 byte chunks
-if(chunks.length > 176) throw new Error('File is too large. Max 88 kB.');
+if (chunks.length > 176) throw new Error('File is too large. Max 88 kB.');
 const assembly_script = {
     vin_start: 0,
     vin_end: chunks.length - 1,
     encoding
-}
+};
 const op_return = createOpReturn(site, protocol, version, filename, filetype, file, assembly_script);
 const address_and_redeemscript = getAddressesAndRedeemScripts(chunks, salt);
 
@@ -59,7 +59,7 @@ async function main() {
                     "satoshis": utxo.value,
                 })
             });
-            if(total_amount_temp < origin_address_fee) throw new Error('Insufficient funds in origin address');
+            if (total_amount_temp < origin_address_fee) throw new Error('Insufficient funds in origin address');
             total_amount_temp -= origin_address_fee; // fee
             let tx_temp = new garlicore.Transaction();
             tx_temp.from(utxos_temp);
@@ -189,7 +189,7 @@ function connectToElectrum() {
         client.initElectrum(
             { client: 'electrum-client-js', version: ['1.2', '1.4'] },
             { retryPeriod: 5000, maxRetry: 10, pingPeriod: 5000 }
-        );
+        ).catch(e => console.log(e));
     } catch (error) {
         console.log(error);
     }

@@ -1,7 +1,7 @@
 import { ElectrumClient } from '@samouraiwallet/electrum-client';
 import garlicore from 'bitcore-lib-grlc';
 import fs from 'fs';
-const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
+const client = new ElectrumClient(50002, 'electrum.maxpuig.com', 'ssl');
 
 const txid = 'd810cc3ec4067244f6a3a6a08e77913e230f7c20776c8ec0f0de88100756d5d1'; // base64 grlc.png
 // const txid = '7aba46568d3b8170024826409c1c468af968d5cf8b96f5021dad372d16886f24'; // base64 9+10.mp3
@@ -24,7 +24,7 @@ async function main() {
     let data_array = tx.inputs.map((vin) => { return vin.script });
     let data = '';
     for (let chunk of data_array) {
-        data += cutScript(cutScript(chunk))
+        data += cutScript(cutScript(chunk));
     }
     let decodedTitle = decodeTitle(title);
     console.log(decodedTitle);
