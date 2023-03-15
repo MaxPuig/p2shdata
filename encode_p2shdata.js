@@ -81,7 +81,7 @@ async function main() {
         utxos_addresses = garlicore.Transaction(utxos_addresses).toObject().outputs;
         let tx = new garlicore.Transaction();
         let total_amount = 0;
-        for (let i = 0; i < utxos_addresses.length; i++) {
+        for (let i = 0; i < address_and_redeemscript.length; i++) {
             total_amount += utxos_addresses[i].satoshis;
             let utxo = new garlicore.Transaction.UnspentOutput({
                 "txId": multiple_addresses_funded_txid,
